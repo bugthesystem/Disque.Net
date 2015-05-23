@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.22823.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Disque.Net", "Disque.Net\Disque.Net.csproj", "{9CCA5F0C-FF19-49E9-AC98-A5887F5AEFE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Disque.Net.Tests", "Disque.Net.Tests\Disque.Net.Tests.csproj", "{B89A6A65-8281-4163-8A31-746B90402FBC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9CCA5F0C-FF19-49E9-AC98-A5887F5AEFE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CCA5F0C-FF19-49E9-AC98-A5887F5AEFE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CCA5F0C-FF19-49E9-AC98-A5887F5AEFE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CCA5F0C-FF19-49E9-AC98-A5887F5AEFE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B89A6A65-8281-4163-8A31-746B90402FBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B89A6A65-8281-4163-8A31-746B90402FBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B89A6A65-8281-4163-8A31-746B90402FBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B89A6A65-8281-4163-8A31-746B90402FBC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
