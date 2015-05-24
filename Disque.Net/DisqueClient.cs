@@ -53,6 +53,7 @@ namespace Disque.Net
             }
         }
 
+
         public string Info()
         {
             return (string)_c.Call(Commands.INFO.ToString());
@@ -133,9 +134,14 @@ namespace Disque.Net
             return result;
         }
 
-        public long Ackjob(List<string> jobIds)
+        public long Ackjob(List<string> jobIdList)
         {
-            throw new NotImplementedException();
+            return (long)_c.Call(Commands.ACKJOB.ToString(), string.Join(" ", jobIdList));
+        }
+
+        public long Ackjob(params string[] jobIds)
+        {
+            return Ackjob(jobIdList: jobIds.ToList());
         }
 
         public long Qlen(string queueName)

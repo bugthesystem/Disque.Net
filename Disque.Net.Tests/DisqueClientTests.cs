@@ -77,7 +77,10 @@ namespace Disque.Net.Tests
         [Test]
         public void AckJob()
         {
+            string jobId = q.AddJob(GetQueueName(), "message", 10);
+            long count = q.Ackjob(jobId);
 
+            count.Should().Be(1);
         }
 
         [Test]
