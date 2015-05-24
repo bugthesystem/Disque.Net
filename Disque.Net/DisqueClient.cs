@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Nhiredis;
+using System.Linq;
+using CSRedis;
 
 namespace Disque.Net
 {
@@ -9,10 +10,10 @@ namespace Disque.Net
         private const string DISQUE_PROTOCOL = "disque://";
         private const string DISQUE_HOST = "127.0.0.1";
         private const int DISQUE_PORT = 7711;
-        private const int DEFAULT_TIMEOUT_IN_SECS = 2;
+        private const int DEFAULT_TIMEOUT_IN_SECS = 30;
         private readonly List<Uri> _uris = new List<Uri>();
         private readonly Random _randomGenerator = new Random();
-        private RedisClient _c;
+        private IRedisClient _c;
 
         public DisqueClient() : this(new List<Uri> { new Uri(string.Format("{0}{1}:{2}", DISQUE_PROTOCOL, DISQUE_HOST, DISQUE_PORT)) })
         {
@@ -43,37 +44,93 @@ namespace Disque.Net
                 try
                 {
                     Uri uri = _uris[index];
-                    _c = new RedisClient(uri.Host, uri.Port, TimeSpan.FromSeconds(DEFAULT_TIMEOUT_IN_SECS));
+                    _c = new RedisClient(uri.Host, uri.Port);
                 }
-                catch (NhiredisException e)
+                catch (Exception e)
                 {
                     _uris.RemoveAt(index);
                 }
             }
         }
 
+        public string Info()
+        {
+            return (string)_c.Call(Commands.INFO.ToString());
+        }
+
+        public string Info(string section)
+        {
+            return (string)_c.Call(Commands.INFO.ToString(), section);
+        }
+
         public string AddJob(string queueName, string job, int mstimeout)
         {
             //ADDJOB queue_name job <ms-timeout> [REPLICATE <count>] [DELAY <sec>] [RETRY <sec>] [TTL <sec>] [MAXLEN <count>] [ASYNC]
-            return _c.RedisCommand<string>(Commands.ADDJOB.ToString(), queueName, job, mstimeout);
+            return (string)_c.Call(Commands.ADDJOB.ToString(), queueName, job, mstimeout.ToString());
         }
 
         public string AddJob(string queueName, string job, long mstimeout, JobParams jobParams)
         {
             //ADDJOB queue_name job <ms-timeout> [REPLICATE <count>] [DELAY <sec>] [RETRY <sec>] [TTL <sec>] [MAXLEN <count>] [ASYNC]
-            return _c.RedisCommand<string>(Commands.ADDJOB.ToString(), queueName, job, mstimeout, jobParams.Replicate, jobParams.Delay, jobParams.Retry,
-                                                                         jobParams.Ttl, jobParams.Maxlen, jobParams.Async);
+            string result;
+            if (jobParams.Async)
+            {
+                result = (string)_c.Call(
+                    Commands.ADDJOB.ToString(), queueName, job, mstimeout.ToString(),
+                    Keywords.REPLICATE.ToString(), jobParams.Replicate.ToString(),
+                    Keywords.DELAY.ToString(), jobParams.Delay.ToString(),
+                    Keywords.RETRY.ToString(), jobParams.Retry.ToString(),
+                    Keywords.TTL.ToString(), jobParams.Ttl.ToString(),
+                    Keywords.MAXLEN.ToString(), jobParams.Maxlen.ToString(),
+                    Keywords.ASYNC.ToString());
+            }
+            else
+            {
+                result = (string)_c.Call(
+                  Commands.ADDJOB.ToString(), queueName, job, mstimeout.ToString(),
+                  Keywords.REPLICATE.ToString(), jobParams.Replicate.ToString(),
+                  Keywords.DELAY.ToString(), jobParams.Delay.ToString(),
+                  Keywords.RETRY.ToString(), jobParams.Retry.ToString(),
+                  Keywords.TTL.ToString(), jobParams.Ttl.ToString(),
+                  Keywords.MAXLEN.ToString(), jobParams.Maxlen.ToString());
+            }
 
+            return result;
         }
 
         public List<Job> GetJob(List<string> queueNames)
         {
-            throw new NotImplementedException();
+            //GETJOB [TIMEOUT <ms-timeout>] [COUNT <count>] FROM queue1 queue2 ... queueN
+            var result = new List<Job>();
+
+            object call = _c.Call(Commands.GETJOB.ToString(), Keywords.FROM.ToString(), string.Join(" ", queueNames));
+
+            ParseGetJobResponse(call, result);
+
+            return result;
+        }
+
+        private void ParseGetJobResponse(object response, List<Job> jobs)
+        {
+            object[] objects = response as object[];
+            if (objects != null)
+                jobs.AddRange(from dynamic o in objects select new Job(o[0], o[1], o[2]));
         }
 
         public List<Job> GetJob(long timeout, long count, List<string> queueNames)
         {
-            throw new NotImplementedException();
+            //GETJOB [TIMEOUT <ms-timeout>] [COUNT <count>] FROM queue1 queue2 ... queueN
+            var result = new List<Job>();
+
+            object call = _c.Call(Commands.GETJOB.ToString(),
+                Keywords.TIMEOUT.ToString(), timeout.ToString(),
+                Keywords.COUNT.ToString(), count.ToString(),
+                Keywords.FROM.ToString(),
+                string.Join(" ", queueNames));
+
+            ParseGetJobResponse(call, result);
+
+            return result;
         }
 
         public long Ackjob(List<string> jobIds)
@@ -81,20 +138,9 @@ namespace Disque.Net
             throw new NotImplementedException();
         }
 
-        public string Info()
-        {
-            var arguments = Commands.INFO.ToString();
-            return _c.RedisCommand<string>(arguments);
-        }
-
-        public string Info(string section)
-        {
-            return _c.RedisCommand<string>("INFO", section);
-        }
-
         public long Qlen(string queueName)
         {
-            return 10;
+            throw new NotImplementedException();
         }
 
         public List<Job> Qpeek(string queueName, long count)
@@ -137,11 +183,9 @@ namespace Disque.Net
             throw new NotImplementedException();
         }
 
-        public bool Close()
+        public void Close()
         {
-            //TODO:
             _c.Dispose();
-            return true;
         }
 
         public void Dispose()

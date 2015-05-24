@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using Common.Testing.NUnit;
 using FluentAssertions;
 using NUnit.Framework;
@@ -36,7 +38,7 @@ namespace Disque.Net.Tests
             {
                 Replicate = 1,
                 Retry = 10,
-                Ttl = 10,
+                Ttl = 20,
                 Maxlen = 10,
                 Delay = 10,
                 Async = true
@@ -49,13 +51,27 @@ namespace Disque.Net.Tests
         [Test]
         public void GetJob()
         {
+            string queue = GetQueueName();
+            string jobId = q.AddJob(queue, "test", 60);
 
+            Thread.Sleep(2000);
+
+            List<Job> jobs = q.GetJob(new List<string> { queue });
+            Job job = jobs.First();
+
+            jobId.Should().Be(job.Id);
+            "test".Should().Be(job.Body);
+            queue.Should().Be(job.QueueName);
         }
 
         [Test]
         public void GetJobWithParams()
         {
-
+            String queue = GetQueueName();
+            q.AddJob(queue, "message", 10);
+            q.AddJob(queue, "message", 10);
+            List<Job> jobs = q.GetJob(100, 2, new List<string> { queue });
+            jobs.Count.Should().Be(2);
         }
 
         [Test]

@@ -20,6 +20,6 @@ namespace Disque.Net
         JobInfo Show(string jobId);
         string Ping();
         long Working(string jobId);
-        bool Close();
+        void Close();
     }
 }
