@@ -23,6 +23,12 @@ namespace Disque.Net.Tests
             q.Close();
         }
 
+        [Test]
+        public void Ping()
+        {
+            string pong = q.Ping();
+            pong.Should().NotBeNullOrEmpty();
+        }
 
         [Test]
         public void AddJob()
@@ -191,14 +197,13 @@ namespace Disque.Net.Tests
         [Test]
         public void Show()
         {
-
+            string queue = GetQueueName();
+            string jobId = q.AddJob(queue, "testJob", 10);
+            JobInfo info = q.Show(jobId);
+            info.Should().NotBeNull();
         }
 
-        [Test]
-        public void Ping()
-        {
-        }
-
+       
         [Test]
         public void Working()
         {

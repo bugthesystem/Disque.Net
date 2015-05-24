@@ -200,12 +200,19 @@ namespace Disque.Net
 
         public JobInfo Show(string jobId)
         {
-            throw new NotImplementedException();
+            object call = _c.Call(Commands.SHOW.ToString(), jobId);
+
+            object[] o = call as object[];
+
+            if (o != null)
+                return null;
+
+            return null;
         }
 
         public string Ping()
         {
-            throw new NotImplementedException();
+            return (string)_c.Call(Commands.PING.ToString());
         }
 
         public long Working(string jobId)
