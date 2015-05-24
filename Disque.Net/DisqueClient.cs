@@ -173,9 +173,14 @@ namespace Disque.Net
             throw new NotImplementedException();
         }
 
-        public long Enqueue(List<string> jobIds)
+        public long Enqueue(List<string> jobIdList)
         {
-            throw new NotImplementedException();
+            return (long)_c.Call(Commands.ENQUEUE.ToString(), string.Join(" ", jobIdList));
+        }
+
+        public long Enqueue(params string[] jobIds)
+        {
+            return Enqueue(jobIdList: jobIds.ToList());
         }
 
         public long Fastack(List<string> jobIdList)
