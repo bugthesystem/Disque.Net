@@ -17,7 +17,8 @@ namespace Disque.Net
         long DelJob(string jobId);
         long Dequeue(List<string> jobIds);
         long Enqueue(List<string> jobIds);
-        long Fastack(List<string> jobIds);
+        long Fastack(List<string> jobIdList);
+        long Fastack(params string[] jobIds);
         JobInfo Show(string jobId);
         string Ping();
         long Working(string jobId);

@@ -86,7 +86,9 @@ namespace Disque.Net.Tests
         [Test]
         public void FastAck()
         {
+            string jobId = q.AddJob("fastack", "message", 10);
 
+            count.Should().Be(1);
         }
 
         [Test]

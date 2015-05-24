@@ -169,9 +169,14 @@ namespace Disque.Net
             throw new NotImplementedException();
         }
 
-        public long Fastack(List<string> jobIds)
+        public long Fastack(List<string> jobIdList)
         {
-            throw new NotImplementedException();
+            return (long)_c.Call(Commands.FASTACK.ToString(), string.Join(" ", jobIdList));
+        }
+
+        public long Fastack(params string[] jobIds)
+        {
+            return Fastack(jobIdList: jobIds.ToList());
         }
 
         public JobInfo Show(string jobId)
