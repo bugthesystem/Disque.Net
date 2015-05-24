@@ -11,11 +11,11 @@ Install-Package Disque.Net
 ####List of supported methods
 - [Ping](#ping)
 - [Info](#info)
-- [Info By Section](#info-by-section)
+- [Info by Section](#info-by-section)
 - [AddJob](#addjob)
-- [AddJob with Parameters](#addjob-with-params)
+- [AddJob with Parameters](#addjob-with-parameters)
 - [GetJob](#getjob)
-- [GetJob with Parameters](#getjob-with-params)
+- [GetJob with Parameters](#getjob-with-parameters)
 - [Ackjob](#ackjob)
 - [Qlen](#qlen)
 - [Qpeek](#qpeek)
@@ -36,7 +36,7 @@ string pong = q.Ping();
 var q = new DisqueClient(new Uri("disque://192.168.59.103:7711"));
 string info = q.Info();
 ```
-## Info By Section
+## Info by Section
 ```csharp
 var q = new DisqueClient(new Uri("disque://192.168.59.103:7711"));
 string info = q.Info("server");
