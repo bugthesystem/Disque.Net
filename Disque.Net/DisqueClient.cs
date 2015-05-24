@@ -146,12 +146,21 @@ namespace Disque.Net
 
         public long Qlen(string queueName)
         {
-            throw new NotImplementedException();
+            return (long)_c.Call(Commands.QLEN.ToString(), queueName);
         }
 
         public List<Job> Qpeek(string queueName, long count)
         {
-            throw new NotImplementedException();
+            var result = new List<Job>();
+
+            object call = _c.Call(Commands.QPEEK.ToString(), queueName, count.ToString());
+
+            object[] objects = call as object[];
+
+            if (objects != null)
+                result.AddRange(from dynamic o in objects select new Job(queueName, o[0], o[1]));
+
+            return result;
         }
 
         public long DelJob(string jobId)
