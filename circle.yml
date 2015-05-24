@@ -14,6 +14,7 @@ dependencies:
     - sudo dpkg -P mono-devel
     - sudo dpkg -P mono-complete
     - sudo apt-get install -f
+    - sudo apt-get purge mono*
     - sudo apt-get install  mono-devel
     - sudo apt-get install  mono-complete
     - mozroots --import --sync
