@@ -14,6 +14,7 @@ dependencies:
     - sudo apt-get install  mono-complete
     - mozroots --import --sync
     - mono .nuget/NuGet.exe restore Disque.Net.sln
+    - export PATH=/tmp/disque-master/src:$PATH && disque-server & disown
     - sudo chmod +x build.sh
 
 test:
