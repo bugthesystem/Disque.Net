@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+	<metadata>
+		<id>Disque.Net</id>
+		<version>1.0.0</version>
+		<authors>ziyasal</authors>
+		<owners>ziyasal</owners>
+		<projectUrl>https://github.com/ziyasal/Disque.Net</projectUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>A simlpe .Net client for the Disque in-memory distributed queue.</description>
+		<summary>A simlpe .Net client for the Disque in-memory distributed queue.</summary>
+		<tags>redis queue disque distributed in-memory</tags>
+		<dependencies>
+			<dependency id="csredis" version="3.2.1" />
+		</dependencies>
+	</metadata>
+	<files>
+    <file src="bin\Release\Disque.Net.dll" target="lib\net451\Disque.Net.dll" />
+	</files>
+</package>

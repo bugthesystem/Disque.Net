@@ -34,6 +34,14 @@
       <HintPath>..\packages\Common.Testing.NUnit.1.0.0\lib\net45\Common.Testing.NUnit.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="csredis, Version=3.2.1.0, Culture=neutral, PublicKeyToken=1afd0264bbe4a44a, processorArchitecture=MSIL">
+      <HintPath>..\packages\csredis.3.2.1\lib\net40\csredis.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Disque.Net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Disque.Net.1.0.0\lib\net451\Disque.Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="FluentAssertions, Version=3.3.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentAssertions.3.3.0\lib\net45\FluentAssertions.dll</HintPath>
       <Private>True</Private>
@@ -70,12 +78,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Disque.Net\Disque.Net.csproj">
-      <Project>{9CCA5F0C-FF19-49E9-AC98-A5887F5AEFE9}</Project>
-      <Name>Disque.Net</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
