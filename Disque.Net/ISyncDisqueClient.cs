@@ -15,7 +15,8 @@ namespace Disque.Net
         long Qlen(string queueName);
         List<Job> Qpeek(string queueName, long count);
         long DelJob(string jobId);
-        long Dequeue(List<string> jobIds);
+        long Dequeue(List<string> jobIdList);
+        long Dequeue(params string[] jobIds);
         long Enqueue(List<string> jobIdList);
         long Enqueue(params string[] jobIds);
         long Fastack(List<string> jobIdList);

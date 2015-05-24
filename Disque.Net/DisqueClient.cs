@@ -168,9 +168,14 @@ namespace Disque.Net
             throw new NotImplementedException();
         }
 
-        public long Dequeue(List<string> jobIds)
+        public long Dequeue(List<string> jobIdList)
         {
-            throw new NotImplementedException();
+            return (long)_c.Call(Commands.DEQUEUE.ToString(), string.Join(" ", jobIdList));
+        }
+
+        public long Dequeue(params string[] jobIds)
+        {
+            return Dequeue(jobIdList: jobIds.ToList());
         }
 
         public long Enqueue(List<string> jobIdList)

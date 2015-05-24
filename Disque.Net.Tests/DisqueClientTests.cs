@@ -87,6 +87,7 @@ namespace Disque.Net.Tests
         public void FastAck()
         {
             string jobId = q.AddJob("fastack", "message", 10);
+            long count = q.Fastack(jobId);
 
             count.Should().Be(1);
         }
@@ -94,15 +95,26 @@ namespace Disque.Net.Tests
         [Test]
         public void Info()
         {
+            string info = q.Info();
+            info.Should().NotBeNullOrEmpty();
+        }
 
+        [Test]
+        public void Info_By_Section()
+        {
+            string info = q.Info("server");
+            info.Should().NotBeNullOrEmpty();
         }
 
 
         [Test]
         public void Qlen()
         {
-
+            string queue = GetQueueName();
+            long qlen = q.Qlen(queue);
+            qlen.Should().Be(0);
         }
+
         [Test]
         [Ignore("pending")]
         public void Hello()
@@ -120,30 +132,51 @@ namespace Disque.Net.Tests
         public void Qpeek()
         {
             // We're testing also the response parsing here
+            string queue = GetQueueName();
 
+            q.AddJob(queue, "testJob", 10);
+            q.AddJob(queue, "testJob2", 10);
+
+            List<Job> jobs = q.Qpeek(queue, 2);
+
+            Job job = jobs.First();
+            Job job2 = jobs.Last();
+
+            job.Body.Should().Be("testJob");
+            job2.Body.Should().Be("testJob2");
         }
 
         [Test]
         public void QpeekEmpty()
         {
-
+            List<Job> jobs = q.Qpeek(GetQueueName(), 2);
+            jobs.Count.Should().Be(0);
         }
 
         [Test]
         public void QpeekInverse()
         {
-
+            String queue = GetQueueName();
+            List<Job> jobs = q.Qpeek(queue, -2);
+            jobs.Count.Should().Be(0);
         }
 
         [Test]
         public void Enqueue()
         {
+            string queue = GetQueueName();
+            string jobId = q.AddJob(queue, "testJob", 10);
+            long count = q.Enqueue(jobId);
+            count.Should().Be(0);
         }
 
         [Test]
         public void Dequeue()
         {
-
+            string queue = GetQueueName();
+            string jobId = q.AddJob(queue, "testJob", 10);
+            long count = q.Dequeue(jobId);
+            count.Should().Be(1);
         }
 
         [Test]
