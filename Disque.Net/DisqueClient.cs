@@ -14,6 +14,7 @@ namespace Disque.Net
         private readonly List<Uri> _uris = new List<Uri>();
         private readonly Random _randomGenerator = new Random();
         private IRedisClient _c;
+        private IJobInfoBuilder _jobInfoBuilder;
 
         public DisqueClient() : this(new List<Uri> { new Uri(string.Format("{0}{1}:{2}", DISQUE_PROTOCOL, DISQUE_HOST, DISQUE_PORT)) })
         {
@@ -28,6 +29,7 @@ namespace Disque.Net
         public DisqueClient(List<Uri> uris)
         {
             _uris.AddRange(uris);
+            _jobInfoBuilder = new JobInfoBuilder();
             Connect();
         }
 
@@ -205,7 +207,9 @@ namespace Disque.Net
             object[] o = call as object[];
 
             if (o != null)
-                return null;
+            {
+                return _jobInfoBuilder.BuildFrom(o);
+            }
 
             return null;
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using Common.Testing.NUnit;
 using FluentAssertions;
 using NUnit.Framework;
@@ -24,7 +25,7 @@ namespace Disque.Net.Tests
         [Test]
         public void Throw_Exception_When_Nodes_Are_Unavailbale()
         {
-            Assert.Throws<DisqueConnectionException>(() =>
+            Assert.Throws<SocketException>(() =>
             {
                 _q = new DisqueClient(new List<Uri> { new Uri("disque://192.168.59.103:55666") });
                 _q.Info();

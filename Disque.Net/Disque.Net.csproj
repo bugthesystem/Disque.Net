@@ -47,9 +47,11 @@
     <Compile Include="Commands.cs" />
     <Compile Include="DisqueClient.cs" />
     <Compile Include="DisqueConnectionException.cs" />
+    <Compile Include="IJobInfoBuilder.cs" />
     <Compile Include="ISyncDisqueClient.cs" />
     <Compile Include="Job.cs" />
     <Compile Include="JobInfo.cs" />
+    <Compile Include="JobInfoBuilder.cs" />
     <Compile Include="JobParams.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
