@@ -165,7 +165,7 @@ namespace Disque.Net
 
         public long DelJob(string jobId)
         {
-            throw new NotImplementedException();
+            return (long)_c.Call(Commands.DELJOB.ToString(), jobId);
         }
 
         public long Dequeue(List<string> jobIdList)

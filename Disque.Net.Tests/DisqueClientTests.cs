@@ -182,7 +182,10 @@ namespace Disque.Net.Tests
         [Test]
         public void DelJob()
         {
-
+            string queue = GetQueueName();
+            string jobId = q.AddJob(queue, "testJob", 10);
+            long count = q.DelJob(jobId);
+            count.Should().Be(1);
         }
 
         [Test]
