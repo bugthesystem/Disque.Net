@@ -10,18 +10,22 @@ namespace Disque.Net
         private const string DISQUE_PROTOCOL = "disque://";
         private const string DISQUE_HOST = "127.0.0.1";
         private const int DISQUE_PORT = 7711;
-        private const int DEFAULT_TIMEOUT_IN_SECS = 30;
         private readonly List<Uri> _uris = new List<Uri>();
-        private readonly Random _randomGenerator = new Random();
+        private readonly Random _random = new Random();
         private IRedisClient _c;
-        private IJobInfoBuilder _jobInfoBuilder;
+        private readonly IJobInfoBuilder _jobInfoBuilder;
 
-        public DisqueClient() : this(new List<Uri> { new Uri(string.Format("{0}{1}:{2}", DISQUE_PROTOCOL, DISQUE_HOST, DISQUE_PORT)) })
+        public DisqueClient() : this(new Uri(string.Format("{0}{1}:{2}", DISQUE_PROTOCOL, DISQUE_HOST, DISQUE_PORT)))
         {
 
         }
 
-        public DisqueClient(string host, int port) : this(new List<Uri> { new Uri(string.Format("{0}{1}:{2}", DISQUE_PROTOCOL, host, port)) })
+        public DisqueClient(string host, int port) : this(new Uri(string.Format("{0}{1}:{2}", DISQUE_PROTOCOL, host, port)))
+        {
+
+        }
+
+        public DisqueClient(params Uri[] uris) : this(uris.ToList())
         {
 
         }
@@ -41,7 +45,7 @@ namespace Disque.Net
                 {
                     throw new DisqueConnectionException("Could not connect to any of the provided nodes");
                 }
-                int index = _randomGenerator.Next(_uris.Count);
+                int index = _random.Next(_uris.Count);
 
                 try
                 {
@@ -54,8 +58,7 @@ namespace Disque.Net
                 }
             }
         }
-
-
+        
         public string Info()
         {
             return (string)_c.Call(Commands.INFO.ToString());
@@ -113,11 +116,10 @@ namespace Disque.Net
             return result;
         }
 
-        private void ParseGetJobResponse(object response, List<Job> jobs)
+        public List<Job> GetJob(params string[] queues)
         {
-            object[] objects = response as object[];
-            if (objects != null)
-                jobs.AddRange(from dynamic o in objects select new Job(o[0], o[1], o[2]));
+            //GETJOB [TIMEOUT <ms-timeout>] [COUNT <count>] FROM queue1 queue2 ... queueN
+            return GetJob(queueNames: queues.ToList());
         }
 
         public List<Job> GetJob(long timeout, long count, List<string> queueNames)
@@ -134,6 +136,12 @@ namespace Disque.Net
             ParseGetJobResponse(call, result);
 
             return result;
+        }
+
+        public List<Job> GetJob(long timeout, long count, params string[] queues)
+        {
+            //GETJOB [TIMEOUT <ms-timeout>] [COUNT <count>] FROM queue1 queue2 ... queueN
+            return GetJob(timeout, count, queueNames: queues.ToList());
         }
 
         public long Ackjob(List<string> jobIdList)
@@ -232,6 +240,14 @@ namespace Disque.Net
         public void Dispose()
         {
             _c.Dispose();
+        }
+
+        private void ParseGetJobResponse(object response, List<Job> jobs)
+        {
+            object[] objects = response as object[];
+
+            if (objects != null)
+                jobs.AddRange(from dynamic o in objects select new Job(o[0], o[1], o[2]));
         }
     }
 }

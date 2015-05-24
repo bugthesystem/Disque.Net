@@ -7,7 +7,9 @@ namespace Disque.Net
         string AddJob(string queueName, string job, int mstimeout);
         string AddJob(string queueName, string job, long mstimeout, JobParams jobParams);
         List<Job> GetJob(List<string> queueNames);
+        List<Job> GetJob(params string[] queues);
         List<Job> GetJob(long timeout, long count, List<string> queueNames);
+        List<Job> GetJob(long timeout, long count, params string[] queues);
         long Ackjob(List<string> jobIdList);
         long Ackjob(params string[] jobIds);
         string Info();

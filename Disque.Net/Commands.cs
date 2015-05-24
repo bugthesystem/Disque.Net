@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Disque.Net
+﻿namespace Disque.Net
 {
     public enum Keywords
     {

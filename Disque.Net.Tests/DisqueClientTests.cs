@@ -15,7 +15,7 @@ namespace Disque.Net.Tests
 
         protected override void FinalizeSetUp()
         {
-            q = new DisqueClient(new List<Uri> { new Uri("disque://192.168.59.103:7711") });
+            q = new DisqueClient(new Uri("disque://192.168.59.103:7711"));
         }
 
         protected override void FinalizeTearDown()
