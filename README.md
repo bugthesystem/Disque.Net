@@ -16,6 +16,7 @@ If you encounter a bug, performance issue, or malfunction, please add an [Issue]
 ##TODO
 - Add more tests
 - Add more documentation
+- Async methods
 
 ##License
 
