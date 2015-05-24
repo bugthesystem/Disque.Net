@@ -203,11 +203,15 @@ namespace Disque.Net.Tests
             info.Should().NotBeNull();
         }
 
-       
+
         [Test]
         public void Working()
         {
-
+            String queue = GetQueueName();
+            String jobId = q.AddJob(queue, "testJob", 10);
+            long secs = q.Working(jobId);
+            secs.Should().NotBe(null);
+            secs.Should().NotBe(0L);
         }
 
         [Test]

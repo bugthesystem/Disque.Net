@@ -217,7 +217,7 @@ namespace Disque.Net
 
         public long Working(string jobId)
         {
-            throw new NotImplementedException();
+            return (long)_c.Call(Commands.WORKING.ToString());
         }
 
         public void Close()
