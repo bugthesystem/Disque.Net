@@ -6,14 +6,16 @@ dependencies:
   pre:
     - sudo apt-get update
     - sudo apt-get install -y --no-install-recommends curl ca-certificates unzip build-essential
-    - cd /tmp && curl https://codeload.github.com/antirez/disque/zip/master -o disque.zip && unzip disque.zip && cd disque-master && make all
-    - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-    - echo "deb http://download.mono-project.com/repo/debian wheezy main" | sudo tee /etc/apt/sources.list.d/mono-xamarin.list
-    - sudo apt-get update
-    - sudo apt-get install  mono-devel
-    - sudo apt-get install  mono-complete
+    - wget http://download.mono-project.com/sources/mono/mono-3.10.0.tar.bz2
+    - tar -xvf mono-3.10.0.tar.bz2
+    - rm mono-3.10.0.tar.bz2
+    - cd mono-3.10.0/
+    - ./configure --prefix=/usr/local
+    - make
+    - sudo make install
     - mozroots --import --sync
     - mono .nuget/NuGet.exe restore Disque.Net.sln
+    - cd /tmp && curl https://codeload.github.com/antirez/disque/zip/master -o disque.zip && unzip disque.zip && cd disque-master && make all
     - export PATH=/tmp/disque-master/src:$PATH && disque-server & disown
     - sudo chmod +x build.sh
 
