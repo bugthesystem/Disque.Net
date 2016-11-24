@@ -176,7 +176,9 @@ namespace Disque.Net
             object[] objects = call as object[];
 
             if (objects != null)
-                result.AddRange(from dynamic o in objects select new Job(queueName, o[0], o[1]));
+            {
+                result.AddRange(from dynamic o in objects select new Job(queueName, o[1], o[2]));
+            }
 
             return result;
         }
