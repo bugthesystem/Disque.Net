@@ -14,7 +14,7 @@ namespace Disque.Net.Tests
         [Test]
         public void IterateOverHosts()
         {
-            _q = new DisqueClient(new Uri("disque://192.168.59.103:7711"));
+            _q = new DisqueClient(new Uri(TestConsts.ConnectionString));
             string info = _q.Info();
 
             info.Should().NotBeNullOrEmpty();
@@ -27,7 +27,7 @@ namespace Disque.Net.Tests
         {
             Assert.Throws<SocketException>(() =>
             {
-                _q = new DisqueClient(new Uri("disque://192.168.59.103:55666"));
+                _q = new DisqueClient(new Uri(TestConsts.ConnectionString));
                 _q.Info();
                 _q.Close();
             });

@@ -8,6 +8,11 @@ using NUnit.Framework;
 
 namespace Disque.Net.Tests
 {
+    public static class TestConsts
+    {
+        public static string ConnectionString = "disque://192.168.53.129:7711";
+    }
+
     //DOCKERFILE: https://registry.hub.docker.com/u/squiidz/disque/
     public class DisqueClientTests : TestBase
     {
@@ -15,7 +20,7 @@ namespace Disque.Net.Tests
 
         protected override void FinalizeSetUp()
         {
-            q = new DisqueClient(new Uri("disque://192.168.59.103:7711"));
+            q = new DisqueClient(new Uri(TestConsts.ConnectionString));
         }
 
         protected override void FinalizeTearDown()
@@ -78,6 +83,19 @@ namespace Disque.Net.Tests
             q.AddJob(queue, "message", 10);
             List<Job> jobs = q.GetJob(100, 2, new List<string> { queue });
             jobs.Count.Should().Be(2);
+        }
+
+        [Test]
+        public void GetMultipleJobs()
+        {
+            var q1 = GetQueueName();
+            var q2 = GetQueueName();
+            q.AddJob(q1, "q1 msg", 10);
+            q.AddJob(q1, "q1 msg", 10);
+            q.AddJob(q2, "q2 msg", 10);
+            q.AddJob(q2, "q2 msg", 10);
+            List<Job> jobs = q.GetJob(100, 4, new List<string> { q1, q2 });
+            jobs.Count.Should().Be(4);
         }
 
         [Test]

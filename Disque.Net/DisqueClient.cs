@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using CSRedis;
 
 namespace Disque.Net
@@ -127,11 +128,18 @@ namespace Disque.Net
             //GETJOB [TIMEOUT <ms-timeout>] [COUNT <count>] FROM queue1 queue2 ... queueN
             var result = new List<Job>();
 
-            object call = _c.Call(Commands.GETJOB.ToString(),
-                Keywords.TIMEOUT.ToString(), timeout.ToString(),
-                Keywords.COUNT.ToString(), count.ToString(),
-                Keywords.FROM.ToString(),
-                string.Join(" ", queueNames));
+            var args = new List<string>
+            {
+                Keywords.TIMEOUT.ToString(),
+                timeout.ToString(),
+                Keywords.COUNT.ToString(),
+                count.ToString(),
+                Keywords.FROM.ToString()
+            };
+
+            args.AddRange(queueNames);
+
+            object call = _c.Call(Commands.GETJOB.ToString(), args.ToArray());
 
             ParseGetJobResponse(call, result);
 
@@ -247,7 +255,28 @@ namespace Disque.Net
             object[] objects = response as object[];
 
             if (objects != null)
-                jobs.AddRange(from dynamic o in objects select new Job(o[0], o[1], o[2]));
+            {
+                foreach (var item in objects)
+                {
+                    var child = item as object[];
+                    if (child != null)
+                    {
+                        var job = new Job(Conv(child[0]), Conv(child[1]), Conv(child[2]));
+                        jobs.Add(job);
+                    }
+                }
+            }
+        }
+
+        private static string Conv(object b)
+        {
+            var str = b as string;
+            if (str != null)
+            {
+                return str;
+            }
+
+            return Encoding.UTF8.GetString((byte[])b);
         }
     }
 }
