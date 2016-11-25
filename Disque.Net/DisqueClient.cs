@@ -241,7 +241,7 @@ namespace Disque.Net
 
         public long Working(string jobId)
         {
-            return (long)_c.Call(Commands.WORKING.ToString());
+            return (long)_c.Call(Commands.WORKING.ToString(), jobId);
         }
 
         public void Close()
