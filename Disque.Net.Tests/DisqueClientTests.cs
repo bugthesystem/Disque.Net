@@ -8,6 +8,11 @@ using NUnit.Framework;
 
 namespace Disque.Net.Tests
 {
+    public static class TestConsts
+    {
+        public static string ConnectionString = "disque://192.168.53.129:7711";
+    }
+
     //DOCKERFILE: https://registry.hub.docker.com/u/squiidz/disque/
     public class DisqueClientTests : TestBase
     {
@@ -15,7 +20,7 @@ namespace Disque.Net.Tests
 
         protected override void FinalizeSetUp()
         {
-            q = new DisqueClient(new Uri("disque://192.168.59.103:7711"));
+            q = new DisqueClient(new Uri(TestConsts.ConnectionString));
         }
 
         protected override void FinalizeTearDown()
@@ -81,6 +86,30 @@ namespace Disque.Net.Tests
         }
 
         [Test]
+        public void GetMultipleJobs()
+        {
+            var q1 = GetQueueName();
+            var q2 = GetQueueName();
+            q.AddJob(q1, "q1 msg", 10);
+            q.AddJob(q1, "q1 msg", 10);
+            q.AddJob(q2, "q2 msg", 10);
+            q.AddJob(q2, "q2 msg", 10);
+            List<Job> jobs = q.GetJob(100, 4, new List<string> { q1, q2 });
+            jobs.Count.Should().Be(4);
+        }
+
+        [Test]
+        public void GetOneJobFromMultipleQueues()
+        {
+            var q1 = GetQueueName();
+            var q2 = GetQueueName();
+            q.AddJob(q1, "q1 msg", 10);
+            q.AddJob(q2, "q2 msg", 10);
+            List<Job> jobs = q.GetJob(new List<string> { q1, q2 });
+            jobs.Count.Should().Be(1);
+        }
+
+        [Test]
         public void AckJob()
         {
             string jobId = q.AddJob(GetQueueName(), "message", 10);
@@ -96,6 +125,16 @@ namespace Disque.Net.Tests
             long count = q.Fastack(jobId);
 
             count.Should().Be(1);
+        }
+
+        [Test]
+        public void FastAckMultiple()
+        {
+            string jobId1 = q.AddJob("fastack", "message1", 10);
+            string jobId2 = q.AddJob("fastack", "message2", 10);
+            long count = q.Fastack(jobId1, jobId2);
+
+            count.Should().Be(2);
         }
 
         [Test]
@@ -182,6 +221,18 @@ namespace Disque.Net.Tests
             count.Should().Be(0);
         }
 
+
+
+        [Test]
+        public void EnqueueMultiple()
+        {
+            string queue = GetQueueName();
+            string jobId1 = q.AddJob(queue, "testJob1", 10);
+            string jobId2 = q.AddJob(queue, "testJob2", 10);
+            long count = q.Enqueue(jobId1, jobId2);
+            count.Should().Be(0);
+        }
+
         [Test]
         public void Dequeue()
         {
@@ -211,7 +262,6 @@ namespace Disque.Net.Tests
 
 
         [Test]
-        [Ignore("TODO: ")]
         public void Working()
         {
             String queue = GetQueueName();
