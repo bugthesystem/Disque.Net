@@ -129,9 +129,15 @@ namespace Disque.Net.Tests
         }
 
         [Test]
-        [Ignore("pending (not yet implemented)")]
         public void Qstat()
         {
+            string queue = GetQueueName();
+            q.AddJob(queue, "job1", 100);
+            var stat = q.Qstat(queue);
+            stat.Should().NotBeNull();
+            stat.Name.Should().BeEquivalentTo(queue);
+            stat.Length.ShouldBeEquivalentTo(1);
+            stat.JobsIn.ShouldBeEquivalentTo(1);
         }
 
         [Test]
