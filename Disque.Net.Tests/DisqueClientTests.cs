@@ -99,6 +99,17 @@ namespace Disque.Net.Tests
         }
 
         [Test]
+        public void GetOneJobFromMultipleQueues()
+        {
+            var q1 = GetQueueName();
+            var q2 = GetQueueName();
+            q.AddJob(q1, "q1 msg", 10);
+            q.AddJob(q2, "q2 msg", 10);
+            List<Job> jobs = q.GetJob(new List<string> { q1, q2 });
+            jobs.Count.Should().Be(1);
+        }
+
+        [Test]
         public void AckJob()
         {
             string jobId = q.AddJob(GetQueueName(), "message", 10);
@@ -114,6 +125,16 @@ namespace Disque.Net.Tests
             long count = q.Fastack(jobId);
 
             count.Should().Be(1);
+        }
+
+        [Test]
+        public void FastAckMultiple()
+        {
+            string jobId1 = q.AddJob("fastack", "message1", 10);
+            string jobId2 = q.AddJob("fastack", "message2", 10);
+            long count = q.Fastack(jobId1, jobId2);
+
+            count.Should().Be(2);
         }
 
         [Test]
@@ -191,6 +212,18 @@ namespace Disque.Net.Tests
             string queue = GetQueueName();
             string jobId = q.AddJob(queue, "testJob", 10);
             long count = q.Enqueue(jobId);
+            count.Should().Be(0);
+        }
+
+
+
+        [Test]
+        public void EnqueueMultiple()
+        {
+            string queue = GetQueueName();
+            string jobId1 = q.AddJob(queue, "testJob1", 10);
+            string jobId2 = q.AddJob(queue, "testJob2", 10);
+            long count = q.Enqueue(jobId1, jobId2);
             count.Should().Be(0);
         }
 

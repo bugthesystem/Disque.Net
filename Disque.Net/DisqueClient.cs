@@ -109,8 +109,13 @@ namespace Disque.Net
         {
             //GETJOB [TIMEOUT <ms-timeout>] [COUNT <count>] FROM queue1 queue2 ... queueN
             var result = new List<Job>();
+            var args = new List<string>
+            {
+                Keywords.FROM.ToString()
+            };
+            args.AddRange(queueNames);
 
-            object call = _c.Call(Commands.GETJOB.ToString(), Keywords.FROM.ToString(), string.Join(" ", queueNames));
+            object call = _c.Call(Commands.GETJOB.ToString(), args.ToArray());
 
             ParseGetJobResponse(call, result);
 
@@ -154,7 +159,7 @@ namespace Disque.Net
 
         public long Ackjob(List<string> jobIdList)
         {
-            return (long)_c.Call(Commands.ACKJOB.ToString(), string.Join(" ", jobIdList));
+            return (long)_c.Call(Commands.ACKJOB.ToString(), jobIdList.ToArray());
         }
 
         public long Ackjob(params string[] jobIds)
@@ -174,11 +179,8 @@ namespace Disque.Net
             object call = _c.Call(Commands.QPEEK.ToString(), queueName, count.ToString());
 
             object[] objects = call as object[];
-
-            if (objects != null)
-            {
-                result.AddRange(from dynamic o in objects select new Job(queueName, o[1], o[2]));
-            }
+            
+            ParseGetJobResponse(objects, result);
 
             return result;
         }
@@ -190,7 +192,7 @@ namespace Disque.Net
 
         public long Dequeue(List<string> jobIdList)
         {
-            return (long)_c.Call(Commands.DEQUEUE.ToString(), string.Join(" ", jobIdList));
+            return (long)_c.Call(Commands.DEQUEUE.ToString(), jobIdList.ToArray());
         }
 
         public long Dequeue(params string[] jobIds)
@@ -200,7 +202,7 @@ namespace Disque.Net
 
         public long Enqueue(List<string> jobIdList)
         {
-            return (long)_c.Call(Commands.ENQUEUE.ToString(), string.Join(" ", jobIdList));
+            return (long)_c.Call(Commands.ENQUEUE.ToString(), jobIdList.ToArray());
         }
 
         public long Enqueue(params string[] jobIds)
@@ -210,7 +212,7 @@ namespace Disque.Net
 
         public long Fastack(List<string> jobIdList)
         {
-            return (long)_c.Call(Commands.FASTACK.ToString(), string.Join(" ", jobIdList));
+            return (long)_c.Call(Commands.FASTACK.ToString(), jobIdList.ToArray());
         }
 
         public long Fastack(params string[] jobIds)
@@ -258,16 +260,13 @@ namespace Disque.Net
 
             if (objects != null)
             {
-                foreach (var item in objects)
-                {
-                    var child = item as object[];
-                    if (child != null)
-                    {
-                        var job = new Job(Conv(child[0]), Conv(child[1]), Conv(child[2]));
-                        jobs.Add(job);
-                    }
-                }
+                jobs.AddRange(ParseJobs(objects));
             }
+        }
+
+        private static IEnumerable<Job> ParseJobs(object[] response)
+        {
+            return response.OfType<object[]>().Select(child => new Job(Conv(child[0]), Conv(child[1]), Conv(child[2])));
         }
 
         private static string Conv(object b)
