@@ -49,12 +49,16 @@
     <Compile Include="DisqueClient.cs" />
     <Compile Include="DisqueConnectionException.cs" />
     <Compile Include="IJobInfoBuilder.cs" />
+    <Compile Include="IQstatBuilder.cs" />
     <Compile Include="ISyncDisqueClient.cs" />
     <Compile Include="Job.cs" />
     <Compile Include="JobInfo.cs" />
     <Compile Include="JobInfoBuilder.cs" />
     <Compile Include="JobParams.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Qstat.cs" />
+    <Compile Include="QstatBuilder.cs" />
+    <Compile Include="ResultBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Disque.Net.nuspec" />

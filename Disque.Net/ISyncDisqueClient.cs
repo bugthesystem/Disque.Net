@@ -24,6 +24,7 @@ namespace Disque.Net
         long Fastack(List<string> jobIdList);
         long Fastack(params string[] jobIds);
         JobInfo Show(string jobId);
+        Qstat Qstat(string queueName);
         string Ping();
         long Working(string jobId);
         void Close();

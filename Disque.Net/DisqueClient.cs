@@ -14,6 +14,7 @@ namespace Disque.Net
         private readonly Random _random = new Random();
         private IRedisClient _c;
         private readonly IJobInfoBuilder _jobInfoBuilder;
+        private readonly IQstatBuilder _queueStatBuilder;
 
         public DisqueClient() : this(new Uri(string.Format("{0}{1}:{2}", DISQUE_PROTOCOL, DISQUE_HOST, DISQUE_PORT)))
         {
@@ -34,6 +35,7 @@ namespace Disque.Net
         {
             _uris.AddRange(uris);
             _jobInfoBuilder = new JobInfoBuilder();
+            _queueStatBuilder = new QstatBuilder();
             Connect();
         }
 
@@ -219,6 +221,18 @@ namespace Disque.Net
             if (o != null)
             {
                 return _jobInfoBuilder.BuildFrom(o);
+            }
+
+            return null;
+        }
+
+        public Qstat Qstat(string queueName)
+        {
+            var call = _c.Call(Commands.QSTAT.ToString(), queueName);
+            var o = call as object[];
+            if (o != null)
+            {
+                return _queueStatBuilder.BuildFrom(o);
             }
 
             return null;

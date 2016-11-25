@@ -21,6 +21,7 @@
         INFO,
         QLEN,
         QPEEK,
+        QSTAT,
         DELJOB,
         DEQUEUE,
         ENQUEUE,
