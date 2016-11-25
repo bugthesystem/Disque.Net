@@ -254,9 +254,9 @@ namespace Disque.Net
             _c.Dispose();
         }
 
-        private void ParseGetJobResponse(object response, List<Job> jobs)
+        private static void ParseGetJobResponse(object response, List<Job> jobs)
         {
-            object[] objects = response as object[];
+            var objects = response as object[];
 
             if (objects != null)
             {
@@ -266,18 +266,15 @@ namespace Disque.Net
 
         private static IEnumerable<Job> ParseJobs(object[] response)
         {
-            return response.OfType<object[]>().Select(child => new Job(Conv(child[0]), Conv(child[1]), Conv(child[2])));
+            return response
+                .OfType<object[]>()
+                .Select(child => new Job(Conv(child[0]), Conv(child[1]), Conv(child[2])));
         }
 
         private static string Conv(object b)
         {
             var str = b as string;
-            if (str != null)
-            {
-                return str;
-            }
-
-            return Encoding.UTF8.GetString((byte[])b);
+            return str ?? Encoding.UTF8.GetString((byte[])b);
         }
     }
 }
