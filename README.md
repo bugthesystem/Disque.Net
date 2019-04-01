@@ -8,7 +8,7 @@ A simple .Net client for the Disque in-memory distributed queue [https://github.
 Install-Package Disque.Net
 ```
 
-####List of supported methods
+#### List of supported methods
 - [Ping](#ping)
 - [Info](#info)
 - [Info by Section](#info-by-section)
@@ -124,12 +124,12 @@ String jobId = q.AddJob("myqueue", "testJob", 10);
 long secs = q.Working(jobId);
 ```
 
-##Bugs
+## Bugs
 If you encounter a bug, performance issue, or malfunction, please add an [Issue](https://github.com/ziyasal/Disque.Net/issues) with steps on how to reproduce the problem.
 
-##TODO
+## TODO
 - Async methods
 
-##License
+## License
 
 Code and documentation are available according to the *MIT* License (see [LICENSE](https://github.com/ziyasal/Disque.Net/blob/master/LICENSE))
