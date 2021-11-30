@@ -1,8 +1,8 @@
-﻿using System;
+﻿using CSRedis;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using CSRedis;
 
 namespace Disque.Net
 {
@@ -16,27 +16,30 @@ namespace Disque.Net
         private IRedisClient _c;
         private readonly IJobInfoBuilder _jobInfoBuilder;
         private readonly IQstatBuilder _queueStatBuilder;
+        private readonly int _reconnectAttempts;
 
-        public DisqueClient() : this(new Uri(string.Format("{0}{1}:{2}", DISQUE_PROTOCOL, DISQUE_HOST, DISQUE_PORT)))
+        public DisqueClient(int reconnectAttempts = 0) : this(reconnectAttempts, new Uri(string.Format("{0}{1}:{2}", DISQUE_PROTOCOL, DISQUE_HOST, DISQUE_PORT)))
         {
-
         }
 
-        public DisqueClient(string host, int port) : this(new Uri(string.Format("{0}{1}:{2}", DISQUE_PROTOCOL, host, port)))
+        public DisqueClient(string host, int port, int reconnectAttempts = 0) : this(reconnectAttempts, new Uri(string.Format("{0}{1}:{2}", DISQUE_PROTOCOL, host, port)))
         {
-
         }
 
         public DisqueClient(params Uri[] uris) : this(uris.ToList())
         {
-
         }
 
-        public DisqueClient(List<Uri> uris)
+        public DisqueClient(int reconnectAttempts = 0, params Uri[] uris) : this(uris.ToList(), reconnectAttempts)
+        {
+        }
+
+        public DisqueClient(List<Uri> uris, int reconnectAttempts = 0)
         {
             _uris.AddRange(uris);
             _jobInfoBuilder = new JobInfoBuilder();
             _queueStatBuilder = new QstatBuilder();
+            _reconnectAttempts = reconnectAttempts;
             Connect();
         }
 
@@ -53,7 +56,10 @@ namespace Disque.Net
                 try
                 {
                     Uri uri = _uris[index];
-                    _c = new RedisClient(uri.Host, uri.Port);
+                    _c = new RedisClient(uri.Host, uri.Port)
+                    {
+                        ReconnectAttempts = _reconnectAttempts
+                    };
                 }
                 catch (Exception e)
                 {
@@ -61,7 +67,7 @@ namespace Disque.Net
                 }
             }
         }
-        
+
         public string Info()
         {
             return (string)_c.Call(Commands.INFO.ToString());
@@ -181,7 +187,7 @@ namespace Disque.Net
             object call = _c.Call(Commands.QPEEK.ToString(), queueName, count.ToString());
 
             object[] objects = call as object[];
-            
+
             ParseGetJobResponse(objects, result);
 
             return result;
